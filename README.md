@@ -1,6 +1,11 @@
-# CLIP-Vision-NLP-
-CLIP using the Fashion Product Image Dataset. Combines images and text.
-CLIP (Contrastive Language-Image Pretraining)
+# CLIP Implementation with Fashion Product Dataset
+
+This project implements CLIP (Contrastive Language-Image Pretraining) from scratch using PyTorch and is tested on the Fashion Product Image Dataset.
+
+## Installation
+
+1. Clone this repository.
+2. Install the required dependencies:
 
 clip_project/
 │
