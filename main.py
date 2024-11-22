@@ -1,10 +1,10 @@
 # main.py
-from data.dataset import get_fashion_product_data
+from data.dataset_getter import get_fashion_product_data
 from model.clip import load_clip_model
 from training.train import train_clip
 from evaluation.evaluate import evaluate_clip
 
-DATA_PATH = 'data/fashion_product_data/'
+DATA_PATH = 'data/'
 
 if __name__ == "__main__":
 
