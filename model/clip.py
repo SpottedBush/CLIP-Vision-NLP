@@ -1,7 +1,10 @@
 # clip.py
-from transformers import CLIPModel, CLIPProcessor
+from transformers import ViTModel, AutoModel, AutoTokenizer
 
 def load_clip_model():
-    model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-    processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
-    return model, processor
+    img_model = ViTModel.from_pretrained("google/vit-base-patch16-224")
+
+    model_name = "huawei-noah/TinyBERT_General_4L_312D"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    txt_model = AutoModel.from_pretrained(model_name)
+    return img_model, txt_model, tokenizer
