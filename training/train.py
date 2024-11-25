@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from pathlib import Path
 
 
 def cosine_similarity(image_features, text_features):
@@ -31,7 +32,9 @@ def clip_contrastive_loss(logits_per_image, logits_per_text):
     # Return the mean of both losses
     return (loss_image_to_text + loss_text_to_image) / 2
 
-def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_size=32):
+def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_size=32, save_path="models/"):
+    Path(save_path).mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.AdamW(
         list(img_model.parameters()) + list(txt_model.parameters()), lr=5e-5
@@ -47,14 +50,14 @@ def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_siz
     img_linear_layer = torch.nn.Linear(768, 32).to(device)
     txt_linear_layer = torch.nn.Linear(312, 32).to(device)
 
-    for epoch in tqdm(range(num_epochs), desc="Training Epochs"):
+    for epoch in range(num_epochs):
         epoch_loss = 0
-        for batch in tqdm(dataloader, desc="Training Batches", leave=False):
+        for batch in tqdm(dataloader, desc=f"Epoch {epoch + 1}/{num_epochs}"):
             images, labels = batch
             texts = [str(label) for label in labels]
             
             tokenized_texts = tokenizer(
-                texts, return_tensors="pt", padding=True, truncation=True, max_length=77
+            texts, return_tensors="pt", padding=True, truncation=True, max_length=77
             )
             
             images = images.to(device)
@@ -62,6 +65,7 @@ def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_siz
 
             image_features = img_model(images).last_hidden_state.mean(dim=1)
             text_features = txt_model(**tokenized_texts).last_hidden_state.mean(dim=1)
+
             image_features = img_linear_layer(image_features)
             text_features = txt_linear_layer(text_features)
 
@@ -77,3 +81,16 @@ def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_siz
             epoch_loss += loss.item()
 
         print(f"Epoch {epoch + 1} completed. Loss: {epoch_loss / len(dataloader)}")
+
+        # Save at the end of each epoch
+        # Comment out if you want to save every epoch of the models
+        # torch.save(img_model.state_dict(), f"{save_path}img_model_epoch_{epoch + 1}.pth")
+        # torch.save(txt_model.state_dict(), f"{save_path}txt_model_epoch_{epoch + 1}.pth")
+        # torch.save(img_linear_layer.state_dict(), f"{save_path}img_linear_layer_epoch_{epoch + 1}.pth")
+        # torch.save(txt_linear_layer.state_dict(), f"{save_path}txt_linear_layer_epoch_{epoch + 1}.pth")
+        # torch.save(optimizer.state_dict(), f"{save_path}optimizer_epoch_{epoch + 1}.pth")
+    torch.save(txt_model.state_dict(), f"{save_path}txt_model_complete.pth")
+    torch.save(img_model, f"{save_path}img_model_complete.pth")
+    torch.save(optimizer.state_dict(), f"{save_path}optimizer_complete.pth")
+    
+    print("Training completed and models saved.")
