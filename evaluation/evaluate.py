@@ -29,9 +29,10 @@ def evaluate_clip(img_model, txt_model, tokenizer, dataset, batch_size=32):
             txt_model.to(device)
 
             # Forward pass
-            image_features = img_model(images)
-            text_features = txt_model(**tokenized_texts)
-
+            image_features = img_model(images).pooler_output
+            text_features = txt_model(**tokenized_texts).pooler_output
+            print(image_features.shape, text_features.shape)
+            print(text_features)
             # Compute logits
             logits_per_image = torch.matmul(image_features, text_features.T)
             logits_per_text = logits_per_image.T  # Symmetry
@@ -42,7 +43,9 @@ def evaluate_clip(img_model, txt_model, tokenizer, dataset, batch_size=32):
             
             # Ground truth indices
             ground_truth_indices = torch.arange(len(images)).to(device)
-
+            print("-" * 50)
+            print(predicted_text_idx, ground_truth_indices)
+            
             # Accuracy calculations
             correct_image_to_text += (predicted_text_idx == ground_truth_indices).sum().item()
             correct_text_to_image += (predicted_image_idx == ground_truth_indices).sum().item()

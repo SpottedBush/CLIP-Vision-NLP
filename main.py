@@ -5,20 +5,27 @@ from training.train import train_clip
 from evaluation.evaluate import evaluate_clip
 import sys
 import torch
+from transformers import AutoTokenizer
+
+
 
 DATA_PATH = 'data/'
 
 if __name__ == "__main__":
+    img_model = None
+    txt_model = None
+    tokenizer = None
     dataset = get_fashion_product_data(DATA_PATH)
-    if len(sys.argv) != 1 and len(sys.argv) != 3:
+    if len(sys.argv) != 1 and len(sys.argv) != 4:
         print("Usage: python main.py [img_model_path txt_model_path tokenizer_path] or python main.py")
     
-    elif len(sys.argv) == 3:
+    elif len(sys.argv) == 4:
         print("Loading model from", sys.argv[1], "and", sys.argv[2])
-        img_model = torch.load(sys.argv[1])
-        txt_model = torch.load(sys.argv[2])
-        tokenizer = torch.load(sys.argv[3])
-        train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5)
+        img_model = torch.load(sys.argv[1], weights_only=False)
+        txt_model = torch.load(sys.argv[2], weights_only=False)
+        tokenizer = torch.load(sys.argv[3], weights_only=False)
+        tokenizer = AutoTokenizer.from_pretrained("huawei-noah/TinyBERT_General_4L_312D")
+        
         
     else:
         print("Training model from scratch")

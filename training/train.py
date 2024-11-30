@@ -89,8 +89,8 @@ def train_clip(img_model, txt_model, tokenizer, dataset, num_epochs=5, batch_siz
         # torch.save(img_linear_layer.state_dict(), f"{save_path}img_linear_layer_epoch_{epoch + 1}.pth")
         # torch.save(txt_linear_layer.state_dict(), f"{save_path}txt_linear_layer_epoch_{epoch + 1}.pth")
         # torch.save(optimizer.state_dict(), f"{save_path}optimizer_epoch_{epoch + 1}.pth")
-    torch.save(txt_model.state_dict(), f"{save_path}txt_model_complete.pth")
+    torch.save(txt_model, f"{save_path}txt_model_complete.pth")
     torch.save(img_model, f"{save_path}img_model_complete.pth")
-    torch.save(optimizer.state_dict(), f"{save_path}optimizer_complete.pth")
+    torch.save(optimizer, f"{save_path}optimizer_complete.pth")
     
     print("Training completed and models saved.")
