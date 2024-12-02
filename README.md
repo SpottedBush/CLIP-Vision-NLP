@@ -7,23 +7,23 @@ This project implements CLIP (Contrastive Language-Image Pretraining) from scrat
 1. Clone this repository.
 2. Install the required dependencies:
 
+```
 clip_project/
 │
-├── data/
-│   └── dataset.py            # Dataset loading and preprocessing
+├── dataset/
+│   └── dataset.py            # Dataset custom class and dataset_getter
 │
-├── model/
-│   └── clip.py               # CLIP model implementation
+├── models/
+│   └── ImageEncoderClass.py  # The custom model for images (is also used to get the embeddings in the same dim as text features)
 │
-├── training/
-│   └── train.py              # Training loop and loss functions
-│
-├── evaluation/
-│   └── evaluate.py           # Evaluation functions
+├── train/
+│   └── clipLoss.py           # Loss functions
+│   └── train_and_eval.py     # Training and evaluation function
 │
 ├── utils/
-│   └── helpers.py            # Helper functions (e.g., for visualization)
+│   └── helpers.py            # Helper functions (e.g., for preprocess)
 │
-├── main.py                   # Main script to run the project
+├── main.ipynb                # Main notebook to understand how to use CLIP
 ├── requirements.txt          # List of dependencies
 └── README.md                 # Project overview and instructions
+```
